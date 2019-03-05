@@ -897,7 +897,7 @@ int  main()
 
 		}
 			printf("\33[%dA", (int)ch_num);
-		//bsp_DelayUS(10);
+		bsp_DelayUS(100000);
 			}
     bcm2835_spi_end();
     bcm2835_close();
