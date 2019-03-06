@@ -840,7 +840,7 @@ int  main()
     bcm2835_gpio_fsel(DRDY, BCM2835_GPIO_FSEL_INPT);
     bcm2835_gpio_set_pud(DRDY, BCM2835_GPIO_PUD_UP);
     //ADS1256_WriteReg(REG_MUX,0x01);
-    //ADS1256_WriteReg(REG_ADCON,0x20);
+    ADS1256_WriteReg(REG_ADCON,0x20);
    // ADS1256_CfgADC(ADS1256_GAIN_1, ADS1256_15SPS);
    id = ADS1256_ReadChipID();
    printf("\r\n");
