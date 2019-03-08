@@ -267,13 +267,13 @@ void ADS1256_StartScan(uint8_t _ucScanMode)
 	g_tADS1256.ScanMode = _ucScanMode;
 	/* ��ʼɨ��ǰ, �������������� */
 	{
-		uint8_t i;
+		uint8_t ch_num;
 
 		g_tADS1256.Channel = 0;
 
-		for (i = 0; i < 8; i++)
+		for (ch_num = 0; ch_num < 8; ch_num++)
 		{
-			g_tADS1256.AdcNow[i] = 0;
+			g_tADS1256.AdcNow[ch_num] = 0;
 		}
 	}
 
@@ -607,16 +607,16 @@ static void ADS1256_SetDiffChannal(uint8_t _ch)
 */
 static void ADS1256_WaitDRDY(void)
 {
-	uint32_t i;
+	uint32_t ch_num;
 
-	for (i = 0; i < 400000; i++)
+	for (ch_num = 0; ch_num < 400000; ch_num++)
 	{
 		if (DRDY_IS_LOW())
 		{
 			break;
 		}
 	}
-	if (i >= 400000)
+	if (ch_num >= 400000)
 	{
 		printf("ADS1256_WaitDRDY() Time Out ...\r\n");
 	}
@@ -777,7 +777,7 @@ uint8_t ADS1256_Scan(void)
 */
 void Write_DAC8552(uint8_t channel, uint16_t Data)
 {
-	uint8_t i;
+	uint8_t ch_num;
 
 	 CS_1() ;
 	 CS_0() ;
@@ -817,7 +817,7 @@ int  main()
       uint8_t id;
   	int32_t adc[8];
 	int32_t volt[8];
-	uint8_t i;
+	uint8_t ch_num;
 	uint8_t ch_num;
 	int32_t iTemp;
 	uint8_t buf[3];
@@ -860,35 +860,29 @@ int  main()
 		//{
 			//continue;
 		//}
-		while(1)
-	{
-	       while((ADS1256_Scan() == 0));
-		for (i = 0; i < ch_num; i++)
-		{
-			adc[i] = ADS1256_GetAdc(i);
-              	 volt[i] = (adc[i] * 100) / 167;
-		}
+		while(1){
 
-		for (i = 0; i < ch_num; i++)
-		{
-	                buf[0] = ((uint32_t)adc[i] >> 16) & 0xFF;
-	                buf[1] = ((uint32_t)adc[i] >> 8) & 0xFF;
-	                buf[2] = ((uint32_t)adc[i] >> 0) & 0xFF;
-	                printf("%d=%02X%02X%02X, %8ld", (int)i, (int)buf[0],
-	                       (int)buf[1], (int)buf[2], (long)adc[i]);
+	    while((ADS1256_Scan() == 0));
 
-	                iTemp = volt[i];	/* uV  */
-					if (iTemp < 0)
-					{
-						iTemp = -iTemp;
-	                  		  	printf(" (-%ld.%03ld %03ld V) \r\n", iTemp /1000000, (iTemp%1000000)/1000, iTemp%1000);
-					}
-					else
-					{
-	                    			printf(" ( %ld.%03ld %03ld V) \r\n", iTemp /1000000, (iTemp%1000000)/1000, iTemp%1000);
-					}
+			adc[ch_num] = ADS1256_GetAdc(ch_num);
+	    volt[ch_num] = (adc[ch_num] * 100) / 167;
 
-		}
+			buf[0] = ((uint32_t)adc[ch_num] >> 16) & 0xFF;
+			buf[1] = ((uint32_t)adc[ch_num] >> 8) & 0xFF;
+			buf[2] = ((uint32_t)adc[ch_num] >> 0) & 0xFF;
+			printf("%d=%02X%02X%02X, %8ld", (int)ch_num, (int)buf[0],
+						 (int)buf[1], (int)buf[2], (long)adc[ch_num]);
+
+			iTemp = volt[ch_num];	/* uV  */
+			if (iTemp < 0)
+			{
+					iTemp = -iTemp;
+					printf(" (-%ld.%03ld %03ld V) \r\n", iTemp /1000000, (iTemp%1000000)/1000, iTemp%1000);
+			}
+			else{
+				printf(" ( %ld.%03ld %03ld V) \r\n", iTemp /1000000, (iTemp%1000000)/1000, iTemp%1000);
+			}
+
 			printf("\33[%dA", (int)ch_num);
 		bsp_DelayUS(100000);
 			}
