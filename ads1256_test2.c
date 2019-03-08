@@ -840,7 +840,7 @@ int  main()
     bcm2835_gpio_fsel(DRDY, BCM2835_GPIO_FSEL_INPT);
     bcm2835_gpio_set_pud(DRDY, BCM2835_GPIO_PUD_UP);
     //ADS1256_WriteReg(REG_MUX,0x01);
-    ADS1256_WriteReg(REG_ADCON,0x20);
+    //ADS1256_WriteReg(REG_ADCON,0x20);
    // ADS1256_CfgADC(ADS1256_GAIN_1, ADS1256_15SPS);
    id = ADS1256_ReadChipID();
    printf("\r\n");
@@ -853,7 +853,7 @@ int  main()
 	{
 		printf("Ok, ASD1256 Chip ID = 0x%d\r\n", (int)id);
 	}
-  	ADS1256_CfgADC(ADS1256_GAIN_1, ADS1256_15SPS);
+  	ADS1256_CfgADC(ADS1256_GAIN_1, ADS1256_15000SPS);
        ADS1256_StartScan(0);
 	ch_num = 8;
 	//if (ADS1256_Scan() == 0)
@@ -877,22 +877,15 @@ int  main()
 	                printf("%d=%02X%02X%02X, %8ld", (int)i, (int)buf[0],
 	                       (int)buf[1], (int)buf[2], (long)adc[i]);
 
-												 if(i == 1){
-													 printf(" LDR");
-												 }
-												 else{
-													 printf(" POT");
-												 }
-
 	                iTemp = volt[i];	/* uV  */
 					if (iTemp < 0)
 					{
 						iTemp = -iTemp;
-	                  		  	printf(" -%ld.%03ldV \r\n", iTemp /1000000, (iTemp%1000000)/1000);
+	                  		  	printf(" (-%ld.%03ld %03ld V) \r\n", iTemp /1000000, (iTemp%1000000)/1000, iTemp%1000);
 					}
 					else
 					{
-	                    			printf(" %ld.%03ldV \r\n", iTemp /1000000, (iTemp%1000000)/1000);
+	                    			printf(" ( %ld.%03ld %03ld V) \r\n", iTemp /1000000, (iTemp%1000000)/1000, iTemp%1000);
 					}
 
 		}
@@ -902,5 +895,5 @@ int  main()
     bcm2835_spi_end();
     bcm2835_close();
 
-    return 0; //testing
+    return 0;
 }
