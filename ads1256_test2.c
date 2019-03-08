@@ -852,8 +852,8 @@ int  main()
 	{
 		printf("Ok, ASD1256 Chip ID = 0x%d\r\n", (int)id);
 	}
-  	ADS1256_CfgADC(ADS1256_GAIN_1, ADS1256_15SPS);
-       ADS1256_StartScan(0);
+  ADS1256_CfgADC(ADS1256_GAIN_1, ADS1256_15SPS);
+  ADS1256_StartScan(0);
 	ch_num = 7;
 	//if (ADS1256_Scan() == 0)
 		//{
@@ -869,22 +869,21 @@ int  main()
 			buf[0] = ((uint32_t)adc[ch_num] >> 16) & 0xFF;
 			buf[1] = ((uint32_t)adc[ch_num] >> 8) & 0xFF;
 			buf[2] = ((uint32_t)adc[ch_num] >> 0) & 0xFF;
-			printf("%d=%02X%02X%02X, %8ld", (int)ch_num, (int)buf[0],
+			printf("%d=%02X %02X %02X, %8ld", (int)ch_num, (int)buf[0],
 						 (int)buf[1], (int)buf[2], (long)adc[ch_num]);
 
 			iTemp = volt[ch_num];	/* uV  */
-			if (iTemp < 0)
-			{
-					iTemp = -iTemp;
-					printf(" (-%ld.%03ld %03ld V) \r\n", iTemp /1000000, (iTemp%1000000)/1000, iTemp%1000);
+			if (iTemp < 0){
+				iTemp = -iTemp;
+				printf(" (-%ld.%03ld %03ld V) \r\n", iTemp /1000000, (iTemp%1000000)/1000, iTemp%1000);
 			}
 			else{
 				printf(" ( %ld.%03ld %03ld V) \r\n", iTemp /1000000, (iTemp%1000000)/1000, iTemp%1000);
 			}
 
-			printf("\33[%dA", (int)ch_num);
-		bsp_DelayUS(100000);
-			}
+			//printf("\33[%dA", (int)ch_num);
+			bsp_DelayUS(100000);
+		}
     bcm2835_spi_end();
     bcm2835_close();
 
