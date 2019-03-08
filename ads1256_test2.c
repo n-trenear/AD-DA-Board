@@ -853,7 +853,7 @@ int  main()
 	{
 		printf("Ok, ASD1256 Chip ID = 0x%d\r\n", (int)id);
 	}
-  	ADS1256_CfgADC(ADS1256_GAIN_1, ADS1256_15000SPS);
+  	ADS1256_CfgADC(ADS1256_GAIN_1, ADS1256_15SPS);
        ADS1256_StartScan(0);
 	ch_num = 8;
 	//if (ADS1256_Scan() == 0)
