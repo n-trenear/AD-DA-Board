@@ -814,9 +814,10 @@ uint16_t Voltage_Convert(float Vref, float voltage)
 
 int  main()
 {
-      uint8_t id;
-  	int32_t adc[8];
+  uint8_t id;
+  int32_t adc[8];
 	int32_t volt[8];
+	int32_t Vin;
 	uint8_t ch_num;
 	int32_t iTemp;
 	uint8_t buf[3];
