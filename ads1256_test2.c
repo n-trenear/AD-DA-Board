@@ -881,6 +881,15 @@ int  main()
 				printf(" ( %ld.%03ld %03ld V) \r\n", iTemp /1000000, (iTemp%1000000)/1000, iTemp%1000);
 			}
 
+			Vin = volt[ch_num] / 8 * (1000 + 100000) / 1000;
+			if (Vin < 0){
+				Vin = -Vin;
+				printf(" (-%ld.%03ld %03ld Vin) \r\n", Vin /1000000, (Vin%1000000)/1000, Vin%1000);
+			}
+			else{
+				printf(" ( %ld.%03ld %03ld Vin) \r\n", Vin /1000000, (Vin%1000000)/1000, Vin%1000);
+			}
+
 			//printf("\33[%dA", (int)ch_num);
 			bsp_DelayUS(100000);
 		}
