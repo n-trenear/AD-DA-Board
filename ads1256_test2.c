@@ -854,7 +854,7 @@ int  main()
 	}
   	ADS1256_CfgADC(ADS1256_GAIN_1, ADS1256_15SPS);
        ADS1256_StartScan(0);
-	ch_num = 8;
+	ch_num = 7;
 	//if (ADS1256_Scan() == 0)
 		//{
 			//continue;
