@@ -818,7 +818,6 @@ int  main()
   	int32_t adc[8];
 	int32_t volt[8];
 	uint8_t ch_num;
-	uint8_t ch_num;
 	int32_t iTemp;
 	uint8_t buf[3];
     if (!bcm2835_init())
