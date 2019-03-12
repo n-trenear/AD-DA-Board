@@ -818,6 +818,7 @@ int  main()
   int32_t adc[8];
 	int32_t volt[8];
 	int32_t Vin;
+	int32_t VinArray[];
 	uint8_t i;
 	uint8_t ch_num;
 	int32_t iTemp;
@@ -871,20 +872,8 @@ int  main()
 	              	 volt[i] = (adc[i] * 100) / 167;
 			}
 
-			// buf[0] = ((uint32_t)adc[ch_num] >> 16) & 0xFF;
-			// buf[1] = ((uint32_t)adc[ch_num] >> 8) & 0xFF;
-			// buf[2] = ((uint32_t)adc[ch_num] >> 0) & 0xFF;
-			// printf("%d=%02X %02X %02X, %8ld", (int)ch_num, (int)buf[0],
-			// 			 (int)buf[1], (int)buf[2], (long)adc[ch_num]);
-
 			iTemp = volt[7] - volt[6];	/* uV  */
-			// if (iTemp < 0){
-			// 	iTemp = -iTemp;
-			// 	printf(" (-%ld.%03ld %03ld V) \r\n", iTemp / 1000000, (iTemp%1000000)/1000, iTemp%1000);
-			// }
-			// else{
-			// 	printf(" ( %ld.%03ld %03ld V) \r\n", iTemp / 1000000, (iTemp%1000000)/1000, iTemp%1000);
-			// }
+
 			printf(" %d", iTemp);
 			Vin = iTemp / 8 * ((1000 + 100000) / 1000);
 			if (Vin < 0){
@@ -894,6 +883,16 @@ int  main()
 			else{
 				printf(" ( %ld.%03ld %03ld Vin) \r\n", Vin / 1000000, (Vin%1000000)/1000, Vin%1000);
 			}
+
+			// store temperature
+     	//fprintf(fptr, "%d\n", Vin);
+
+			FILE * fp;
+
+   		fp = fopen ("file.txt", "w+");
+   		fprintf(fp, "%s %s %s %d", "We", "are", "in", 2012);
+
+   		fclose(fp);
 
 			printf("\33[%dA", 1);
 			bsp_DelayUS(100000);
