@@ -821,14 +821,13 @@ int  main()
 	//int32_t VinArray[];
 	uint8_t i;
 	uint8_t ch_num;
-	int32_t iTemp;
 	uint8_t buf[3];
     if (!bcm2835_init())
         return 1;
 
 	FILE * fp;
 
-	fp = fopen ("VoltageReadings.txt", "w+");
+	fp = fopen ("VoltageReadings.csv", "w+");
 
 /*
     bcm2835_spi_begin();
@@ -877,10 +876,11 @@ int  main()
 	              	 volt[i] = (adc[i] * 100) / 167;
 			}
 
-			iTemp = volt[7] - volt[6];	/* uV  */
+			Vin = (volt[7] - volt[6]) / 8 * ((1000 + 100000) / 1000); /* uV  */
 
-			printf(" %d", iTemp);
-			Vin = iTemp / 8 * ((1000 + 100000) / 1000);
+			// store temperature
+   		fprintf(fp, "%d\n", 10);
+
 			if (Vin < 0){
 				Vin = -Vin;
 				printf(" (-%ld.%03ld %03ld Vin) \r\n", Vin / 1000000, (Vin%1000000)/1000, Vin%1000);
@@ -888,9 +888,6 @@ int  main()
 			else{
 				printf(" ( %ld.%03ld %03ld Vin) \r\n", Vin / 1000000, (Vin%1000000)/1000, Vin%1000);
 			}
-
-			// store temperature
-   		fprintf(fp, "%d\n", Vin / 1000000);
 
 			FILE * fptr;
 
