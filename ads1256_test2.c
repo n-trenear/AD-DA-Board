@@ -818,7 +818,7 @@ int  main()
   int32_t adc[8];
 	int32_t volt[8];
 	int32_t Vin;
-	int32_t VinArray[];
+	//int32_t VinArray[];
 	uint8_t i;
 	uint8_t ch_num;
 	int32_t iTemp;
