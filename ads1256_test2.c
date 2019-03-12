@@ -879,8 +879,9 @@ int  main()
 			Vin = (volt[7] - volt[6]) / 8 * ((1000 + 100000) / 1000); /* uV  */
 
 			// store temperature
-			fp = fopen ("VoltageReadings.csv", "a");
+			fp = fopen ("VoltageReadings.csv", "a+");
    		fprintf(fp, "%d\n", 10);
+			fclose(fp);
 
 			if (Vin < 0){
 				Vin = -Vin;
