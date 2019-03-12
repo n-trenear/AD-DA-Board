@@ -878,7 +878,8 @@ int  main()
 			Vin = (volt[7] - volt[6]) / 8 * ((1000 + 100000) / 1000); /* uV  */
 
 			// store temperature and time
-			struct tm tm = *localtime(&time(NULL));
+			time_t t = time(NULL);
+			struct tm tm = *localtime(&t);
 			fp = fopen ("VoltageReadings.csv", "a+");
    		fprintf(fp, "%d-%d-%d %d:%d:%d,%ld.%03ld\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec, Vin / 1000000, (Vin%1000000)/1000);
 			fclose(fp);
