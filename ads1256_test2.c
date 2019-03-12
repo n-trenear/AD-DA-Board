@@ -894,8 +894,8 @@ int  main()
 
 			FILE * fptr;
 
-	fptr = fopen ("file.txt", "w+");
-	fprintf(fptr, "%s %s %s %d", "We", "are", "in", 2012);
+	fptr = fopen ("file.csv", "w+");
+	fprintf(fptr, "%s, %s, %s, %d", "We", "are", "in", 2012);
 
 	fclose(fptr);
 
