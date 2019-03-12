@@ -892,6 +892,13 @@ int  main()
 			// store temperature
    		fprintf(fp, "%d\n", Vin / 1000000);
 
+			FILE * fptr;
+
+	fptr = fopen ("file.txt", "w+");
+	fprintf(fptr, "%s %s %s %d", "We", "are", "in", 2012);
+
+	fclose(fptr);
+
 
 
 			printf("\33[%dA", 1);
