@@ -886,10 +886,10 @@ int  main()
 
 			if (Vin < 0){
 				Vin = -Vin;
-				printf(" (-%ld.%03ld %03ld Vin) \r\n", Vin / 1000000, (Vin%1000000)/1000, Vin%1000);
+				printf("%s (-%ld.%03ld %03ld Vin) \r\n", asctime(tm), Vin / 1000000, (Vin%1000000)/1000, Vin%1000);
 			}
 			else{
-				printf(" ( %ld.%03ld %03ld Vin) \r\n", Vin / 1000000, (Vin%1000000)/1000, Vin%1000);
+				printf("%s ( %ld.%03ld %03ld Vin) \r\n", asctime(tm), Vin / 1000000, (Vin%1000000)/1000, Vin%1000);
 			}
 
 			printf("\33[%dA", 1);
