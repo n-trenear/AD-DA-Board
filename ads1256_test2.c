@@ -881,7 +881,7 @@ int  main()
 			// else{
 			// 	printf(" ( %ld.%03ld %03ld V) \r\n", iTemp / 1000000, (iTemp%1000000)/1000, iTemp%1000);
 			// }
-			printf("%d", iTemp);
+			printf(" %d", iTemp);
 			Vin = (iTemp / 1000000 - 1.29) * 1000000 / 4.1 * ((1000 + 100000) / 1000);
 			if (Vin < 0){
 				Vin = -Vin;
