@@ -855,7 +855,7 @@ int  main()
 	}
   ADS1256_CfgADC(ADS1256_GAIN_1, ADS1256_15SPS);
   ADS1256_StartScan(0);
-	ch_num = 7;
+	ch_num = 8;
 	//if (ADS1256_Scan() == 0)
 		//{
 			//continue;
@@ -864,16 +864,19 @@ int  main()
 
 	    while((ADS1256_Scan() == 0));
 
-			adc[ch_num] = ADS1256_GetAdc(ch_num);
-	    volt[ch_num] = (adc[ch_num] * 100) / 167;
+			for (i = 0; i < ch_num; i++)
+			{
+				adc[i] = ADS1256_GetAdc(i);
+	              	 volt[i] = (adc[i] * 100) / 167;
+			}
 
-			buf[0] = ((uint32_t)adc[ch_num] >> 16) & 0xFF;
-			buf[1] = ((uint32_t)adc[ch_num] >> 8) & 0xFF;
-			buf[2] = ((uint32_t)adc[ch_num] >> 0) & 0xFF;
-			printf("%d=%02X %02X %02X, %8ld", (int)ch_num, (int)buf[0],
-						 (int)buf[1], (int)buf[2], (long)adc[ch_num]);
+			// buf[0] = ((uint32_t)adc[ch_num] >> 16) & 0xFF;
+			// buf[1] = ((uint32_t)adc[ch_num] >> 8) & 0xFF;
+			// buf[2] = ((uint32_t)adc[ch_num] >> 0) & 0xFF;
+			// printf("%d=%02X %02X %02X, %8ld", (int)ch_num, (int)buf[0],
+			// 			 (int)buf[1], (int)buf[2], (long)adc[ch_num]);
 
-			iTemp = volt[ch_num];	/* uV  */
+			iTemp = volt[7] - volt[6];	/* uV  */
 			// if (iTemp < 0){
 			// 	iTemp = -iTemp;
 			// 	printf(" (-%ld.%03ld %03ld V) \r\n", iTemp / 1000000, (iTemp%1000000)/1000, iTemp%1000);
@@ -882,7 +885,7 @@ int  main()
 			// 	printf(" ( %ld.%03ld %03ld V) \r\n", iTemp / 1000000, (iTemp%1000000)/1000, iTemp%1000);
 			// }
 			printf(" %d", iTemp);
-			Vin = (iTemp - 1290000) / 4.1 * ((1000 + 100000) / 1000);
+			Vin = (iTemp - 1290000) / 8 * ((1000 + 100000) / 1000);
 			if (Vin < 0){
 				Vin = -Vin;
 				printf(" (-%ld.%03ld %03ld Vin) \r\n", Vin / 1000000, (Vin%1000000)/1000, Vin%1000);
