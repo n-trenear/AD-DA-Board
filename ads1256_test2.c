@@ -890,7 +890,7 @@ int  main()
 			}
 
 			// store temperature
-   		fprintf(fp, "%d\n", Vin);
+   		fprintf(fp, "%d\n", Vin / 1000000);
 
 
 
