@@ -879,17 +879,17 @@ int  main()
 
 			// store temperature and time
 			time_t t = time(NULL);
-			struct tm *tm = localtime(&t);
+			struct tm tm = *localtime(&t);
 			fp = fopen ("VoltageReadings.csv", "a+");
    		fprintf(fp, "%d-%d-%d %d:%d:%d,%ld.%03ld\n", tm.tm_mday, tm.tm_mon + 1, tm.tm_year + 1900, tm.tm_hour - 2, tm.tm_min, tm.tm_sec, Vin / 1000000, (Vin%1000000)/1000);
 			fclose(fp);
 
 			if (Vin < 0){
 				Vin = -Vin;
-				printf("%s (-%ld.%03ld %03ld Vin) \r\n", asctime(tm), Vin / 1000000, (Vin%1000000)/1000, Vin%1000);
+				printf("%s (-%ld.%03ld %03ld Vin) \r\n", asctime(&tm), Vin / 1000000, (Vin%1000000)/1000, Vin%1000);
 			}
 			else{
-				printf("%s ( %ld.%03ld %03ld Vin) \r\n", asctime(tm), Vin / 1000000, (Vin%1000000)/1000, Vin%1000);
+				printf("%s ( %ld.%03ld %03ld Vin) \r\n", asctime(&tm), Vin / 1000000, (Vin%1000000)/1000, Vin%1000);
 			}
 
 			printf("\33[%dA", 1);
