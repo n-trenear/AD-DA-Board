@@ -880,7 +880,7 @@ int  main()
 
 			// store temperature
 			fp = fopen ("VoltageReadings.csv", "a+");
-   		fprintf(fp, "%f\n", Vin / 1000000);
+   		fprintf(fp, "%ld.%03ld\n", Vin / 1000000, (Vin%1000000)/1000);
 			fclose(fp);
 
 			if (Vin < 0){
