@@ -828,7 +828,7 @@ int  main()
 
 	FILE * fp;
 
-	fp = fopen ("VoltageReadings.csv", "w+");
+	fp = fopen ("VoltageReadings.txt", "w+");
 
 /*
     bcm2835_spi_begin();
