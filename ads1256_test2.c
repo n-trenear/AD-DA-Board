@@ -34,6 +34,7 @@ RPI_V2_GPIO_P1_13->RPI_GPIO_P1_13
 #include <string.h>
 #include <math.h>
 #include <errno.h>
+#include <time.h>
 
 //CS      -----   SPICS
 //DIN     -----   MOSI
@@ -818,13 +819,11 @@ int  main()
   int32_t adc[8];
 	int32_t volt[8];
 	int32_t Vin;
-	//int32_t VinArray[];
 	uint8_t i;
 	uint8_t ch_num;
 	uint8_t buf[3];
     if (!bcm2835_init())
         return 1;
-
 	FILE * fp;
 
 
@@ -861,7 +860,7 @@ int  main()
 	}
   ADS1256_CfgADC(ADS1256_GAIN_1, ADS1256_15SPS);
   ADS1256_StartScan(0);
-	ch_num = 8;
+	ch_num = 8; // number of channels.
 	//if (ADS1256_Scan() == 0)
 		//{
 			//continue;
@@ -878,9 +877,10 @@ int  main()
 
 			Vin = (volt[7] - volt[6]) / 8 * ((1000 + 100000) / 1000); /* uV  */
 
-			// store temperature
+			// store temperature and time
+			struct tm tm = *localtime(time(NULL));
 			fp = fopen ("VoltageReadings.csv", "a+");
-   		fprintf(fp, "%ld.%03ld\n", Vin / 1000000, (Vin%1000000)/1000);
+   		fprintf(fp, "%d-%d-%d %d:%d:%d,%ld.%03ld\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec, Vin / 1000000, (Vin%1000000)/1000);
 			fclose(fp);
 
 			if (Vin < 0){
@@ -890,15 +890,6 @@ int  main()
 			else{
 				printf(" ( %ld.%03ld %03ld Vin) \r\n", Vin / 1000000, (Vin%1000000)/1000, Vin%1000);
 			}
-
-			FILE * fptr;
-
-	fptr = fopen ("file.csv", "w+");
-	fprintf(fptr, "%s, %s, %s, %d", "We", "are", "in", 2012);
-
-	fclose(fptr);
-
-
 
 			printf("\33[%dA", 1);
 			bsp_DelayUS(100000);
