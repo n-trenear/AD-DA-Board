@@ -825,6 +825,11 @@ int  main()
 	uint8_t buf[3];
     if (!bcm2835_init())
         return 1;
+
+	FILE * fp;
+
+	fp = fopen ("VoltageReadings.csv", "w+");
+
 /*
     bcm2835_spi_begin();
     bcm2835_spi_setBitOrder(BCM2835_SPI_BIT_ORDER_LSBFIRST );      // The default
@@ -885,18 +890,14 @@ int  main()
 			}
 
 			// store temperature
-     	//fprintf(fptr, "%d\n", Vin);
+   		fprintf(fp, "%d\n", Vin);
 
-			FILE * fp;
 
-   		fp = fopen ("file.txt", "w+");
-   		fprintf(fp, "%s %s %s %d", "We", "are", "in", 2012);
-
-   		fclose(fp);
 
 			printf("\33[%dA", 1);
 			bsp_DelayUS(100000);
 		}
+		fclose(fp);
     bcm2835_spi_end();
     bcm2835_close();
 
