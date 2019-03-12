@@ -827,7 +827,7 @@ int  main()
 
 	FILE * fp;
 
-	fp = fopen ("VoltageReadings.csv", "w+");
+
 
 /*
     bcm2835_spi_begin();
@@ -879,6 +879,7 @@ int  main()
 			Vin = (volt[7] - volt[6]) / 8 * ((1000 + 100000) / 1000); /* uV  */
 
 			// store temperature
+			fp = fopen ("VoltageReadings.csv", "a");
    		fprintf(fp, "%d\n", 10);
 
 			if (Vin < 0){
