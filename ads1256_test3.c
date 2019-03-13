@@ -879,13 +879,15 @@ int  main()
 			Vmeasured = (volt[7] - volt[6]); //Volts
 			// printf("%ld.%03ld %03ld V \r\n", Vmeasured / 1000000, (Vmeasured%1000000)/1000, Vmeasured%1000);
 			Rtemp = (5 * 1000 - Vmeasured * (1000 + 1000000)) / 1000;
-			printf("%ld.%03ld %03ld R \r\n", Rtemp / 1000000, (Rtemp%1000000)/1000, Rtemp%1000);
+			//printf("%ld.%03ld %03ld R \r\n", Rtemp / 1000000, (Rtemp%1000000)/1000, Rtemp%1000);
+			temp = Rtemp / 0.385;
+			printf("%ld.%03ld %03ld C \r\n", temp / 1000000, (temp%1000000)/1000, temp%1000);
 
 			// store temperature and time
 			time_t t = time(NULL) + 36000; //current time in seconds adding 10 hours
 			struct tm tm = *localtime(&t);
-			fp = fopen ("ResistanceReadings.csv", "a+");
-   		fprintf(fp, "%d-%d-%d %d:%d:%d,%ld.%03ld\n", tm.tm_mday, tm.tm_mon + 1, tm.tm_year + 1900, tm.tm_hour, tm.tm_min, tm.tm_sec, Rtemp / 1000000, (Rtemp%1000000)/1000);
+			fp = fopen ("temperatureReadings.csv", "a+");
+   		fprintf(fp, "%d-%d-%d %d:%d:%d,%ld.%03ld\n", tm.tm_mday, tm.tm_mon + 1, tm.tm_year + 1900, tm.tm_hour, tm.tm_min, tm.tm_sec, temp / 1000000, (temp%1000000)/1000);
 			fclose(fp);
 
 			// if (Rtemp < 0){
