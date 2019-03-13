@@ -877,8 +877,9 @@ int  main()
 			}
 
 			Vmeasured = (volt[7] - volt[6]); //Volts
-			printf("-%ld.%03ld %03ld V \r\n", Vmeasured / 1000000, (Vmeasured%1000000)/1000, Vmeasured%1000);
+			printf("%ld.%03ld %03ld V \r\n", Vmeasured / 1000000, (Vmeasured%1000000)/1000, Vmeasured%1000);
 			Rtemp = (5 * 1000 - Vmeasured * (1000 + 1000000)) / 1000;
+			printf("%ld.%03ld %03ld R \r\n", Rtemp / 1000000, (Rtemp%1000000)/1000, Rtemp%1000);
 
 			// store temperature and time
 			time_t t = time(NULL) + 36000; //current time in seconds adding 10 hours
