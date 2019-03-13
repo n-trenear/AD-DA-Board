@@ -819,6 +819,7 @@ int  main()
   int32_t adc[8];
 	int32_t volt[8];
 	int32_t Rtemp;
+	int32_t Vmeasured;
 	uint8_t i;
 	uint8_t ch_num;
 	uint8_t buf[3];
@@ -877,7 +878,7 @@ int  main()
 
 			Vmeasured = (volt[7] - volt[6]) / 80000000; //Volts
 			printf("%d\n", Vmeasured);
-			Rtemp = (5 * 1000 - Vmeasured * (1000 + 1000000)) / 1000
+			Rtemp = (5 * 1000 - Vmeasured * (1000 + 1000000)) / 1000;
 
 			// store temperature and time
 			time_t t = time(NULL) + 36000; //current time in seconds adding 10 hours
