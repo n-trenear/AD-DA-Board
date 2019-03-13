@@ -887,13 +887,13 @@ int  main()
    		fprintf(fp, "%d-%d-%d %d:%d:%d,%ld.%03ld\n", tm.tm_mday, tm.tm_mon + 1, tm.tm_year + 1900, tm.tm_hour, tm.tm_min, tm.tm_sec, Rtemp / 1000000, (Rtemp%1000000)/1000);
 			fclose(fp);
 
-			if (Rtemp < 0){
-				Rtemp = -Rtemp;
-				printf("-%ld.%03ld %03ld V \r\n", Rtemp / 1000000, (Rtemp%1000000)/1000, Rtemp%1000);
-			}
-			else{
-				printf("%ld.%03ld %03ld V \r\n", Rtemp / 1000000, (Rtemp%1000000)/1000, Rtemp%1000);
-			}
+			// if (Rtemp < 0){
+			// 	Rtemp = -Rtemp;
+			// 	printf("-%ld.%03ld %03ld V \r\n", Rtemp / 1000000, (Rtemp%1000000)/1000, Rtemp%1000);
+			// }
+			// else{
+			// 	printf("%ld.%03ld %03ld V \r\n", Rtemp / 1000000, (Rtemp%1000000)/1000, Rtemp%1000);
+			// }
 
 			printf("\33[%dA", 1);
 			bsp_DelayUS(100000);
