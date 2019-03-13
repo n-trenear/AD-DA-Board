@@ -876,7 +876,7 @@ int  main()
 	              	 volt[i] = (adc[i] * 100) / 167;
 			}
 
-			Vmeasured = (volt[7] - volt[6]); //Volts
+			Vmeasured = (volt[7] - volt[6]) / 1000000.0; //Volts
 			printf("%d\n", Vmeasured);
 			Rtemp = (5 * 1000 - Vmeasured * (1000 + 1000000)) / 1000;
 
