@@ -889,7 +889,7 @@ int  main()
 				printf("-%ld.%03ld %03ld V \r\n", Vin / 1000000, (Vin%1000000)/1000, Vin%1000);
 			}
 			else{
-				printf("%s %ld.%03ld %03ld V \r\n", asctime(&tm), Vin / 1000000, (Vin%1000000)/1000, Vin%1000);
+				printf("%ld.%03ld %03ld V \r\n", Vin / 1000000, (Vin%1000000)/1000, Vin%1000);
 			}
 
 			printf("\33[%dA", 1);
