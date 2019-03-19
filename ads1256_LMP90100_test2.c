@@ -116,7 +116,7 @@ static int  LMP90100_ReadChannel(void)
 	buf[1] = 0x01;  // Upper nibble is 1
 	buf[2] = 0x89;  // Read 0x19 register
 	buf[3] = 0x00;  // Transmit zero.. Response will be written to this value
-	bcm2835_spi_transfern(buf,4);  // Transmit set value of buf, write response into buf for each byte sent.
+	bcm2835_aux_spi_transfern(buf,4);  // Transmit set value of buf, write response into buf for each byte sent.
 	ans = buf[3] & 0x07;  // Read 3 LSBs of 0x19 register
 	return ans;
 
@@ -144,7 +144,7 @@ static float LMP90100_ReadADC(void)
 	buf[3] = 0x00;
 	buf[4] = 0x00;
 	buf[5] = 0x00;
-	bcm2835_spi_transfern(buf,6);
+	bcm2835_aux_spi_transfern(buf,6);
 
 	adc =  (((uint32_t) buf[3]) << 16);
 	adc += (((uint32_t) buf[4]) <<  8);
@@ -303,7 +303,7 @@ int  main()
     setup_buf[14] = 0x07;
     setup_buf[15] = 0x60;
 
-    bcm2835_spi_transfern(setup_buf,16);
+    bcm2835_aux_spi_transfern(setup_buf,16);
     CS_1();
 
     while(1)
