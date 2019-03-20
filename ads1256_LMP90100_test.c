@@ -902,7 +902,7 @@ static unsigned int LMP90100_DRDY (void)
 
           Temp_Reading = LMP90100_ReadADC();
           Channel = LMP90100_ReadChannel();
-          printf("Ch:%02X Temp: %3.1f \r",Channel,Temp_Reading);
+          printf("Ch:%02X Temp: %3.1f \n",Channel,Temp_Reading);
           ctr = 0;
           result = 1;
         }
@@ -957,7 +957,6 @@ int  main()
 	uint8_t buf[3];
     if (!bcm2835_init())
         return 1;
-	FILE * fp;
 
     bcm2835_spi_begin();
     bcm2835_spi_setBitOrder(BCM2835_SPI_BIT_ORDER_MSBFIRST);   //default
@@ -990,6 +989,30 @@ int  main()
 			//continue;
 		//}
 
+    //Todo:  Create Setup function
+      LMP_CS_0();
+      CS_1();
+      setup_buf[0] = 0x10;
+      setup_buf[1] = 0x01;
+      setup_buf[2] = 0x02;
+      setup_buf[3] = 0x0A;   //Set current source to 1mA
+      setup_buf[4] = 0x0F;
+      setup_buf[5] = 0x98;   //Set continuous scan on CH0 - CH3 only.
+      setup_buf[6] = 0x10;
+      setup_buf[7] = 0x02;
+      setup_buf[8] = 0x01;
+      setup_buf[9] = 0x60;
+      setup_buf[10] = 0x03;
+      setup_buf[11] = 0x60;
+      setup_buf[12] = 0x05;
+      setup_buf[13] = 0x60;
+      setup_buf[14] = 0x07;
+      setup_buf[15] = 0x60;
+
+      bcm2835_spi_transfern(setup_buf,16);
+      LMP_CS_1();
+      CS_0();
+
 		while(1){
 
 	    while((ADS1256_Scan() == 0));
@@ -1012,8 +1035,26 @@ int  main()
 				storeVolt(Vin);
 			}
 
-			printf("\33[%dA", 1);
 			bsp_DelayUS(3000);
+
+      //if (LMP90100_DRDY())
+    	if (cs_state == 1)
+    	{
+
+    	   CS_1();
+         LMP_CS_0();
+    	   cs_state = 0;
+    	}
+
+    	if (LMP90100_DRDY())
+    	{
+    		if (cs_state == 0)
+    		{
+    			CS_0();
+          LMP_CS_1();
+    			cs_state = 1;
+    		}
+    		bsp_DelayUS(3000);
 		}
     bcm2835_spi_end();
     bcm2835_close();
