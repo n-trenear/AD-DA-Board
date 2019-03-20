@@ -971,9 +971,11 @@ int  main()
 				storeVolt(Vin);
 			}
 
+			printf("\33[%dA", 1);
+
 			bsp_DelayUS(3000);
 			CS_1();
-			LMP_CS_1()
+			LMP_CS_1();
 
       //if (LMP90100_DRDY())
     	if (cs_state == 1)
@@ -991,7 +993,7 @@ int  main()
     		}
     		bsp_DelayUS(3000);
 			  CS_0();
-				LMP_CS_0();
+				LMP_CS_1();
 		}
 	}
     bcm2835_spi_end();
