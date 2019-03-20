@@ -38,10 +38,10 @@
 //DRDY  -----   ctl_IO     data  starting
 //RST     -----   ctl_IO     reset
 
-#define MISO  19
-#define MOSI  20
+#define MISO  9
+#define MOSI  10
 #define DRDY  17
-#define SPICS  26
+#define SPICS  27
 #define CS_1()  bcm2835_gpio_write(SPICS,HIGH)
 #define CS_0()  bcm2835_gpio_write(SPICS,LOW)
 #define CS_IS_LOW() (bcm2835_gpio_lev(SPICS) == 0)
@@ -57,47 +57,6 @@ void  bsp_DelayUS(uint64_t micros)
 {
 		bcm2835_delayMicroseconds (micros);
 }
-
-/*
-*********************************************************************************************************
-*	name: LMP90100_Send8Bit
-*	function: SPI bus to send 8 bit data
-*	parameter: _data:  data
-*	The return value: NULL
-*********************************************************************************************************
-*/
-// static void LMP90100_Send8Bit(uint8_t _data)
-// {
-//
-// 	//bsp_DelayUS(2);
-// 	bcm2835_spi_transfer(_data);
-// }
-
-/*
-*********************************************************************************************************
-*	name: LMP90100_Recive8Bit
-*	function: SPI bus receive function
-*	parameter: NULL
-*	The return value: NULL
-*********************************************************************************************************
-*/
-// static uint8_t LMP90100_Receive8Bit(void)
-// {
-// 	uint8_t read = 0;
-// 	read = bcm2835_spi_transfer(0);
-// 	return read;
-// }
-
-/*
-*********************************************************************************************************
-*	name: LMP90100_WriteReg
-*	function: Write the corresponding register
-*	parameter: _RegID: register  ID
-*			 _RegValue: register Value
-*	The return value: NULL
-*********************************************************************************************************
-*/
-
 /*
 *********************************************************************************************************
 *	name: LMP90100_ReadChannel
@@ -116,10 +75,9 @@ static int  LMP90100_ReadChannel(void)
 	buf[1] = 0x01;  // Upper nibble is 1
 	buf[2] = 0x89;  // Read 0x19 register
 	buf[3] = 0x00;  // Transmit zero.. Response will be written to this value
-	bcm2835_aux_spi_transfern(buf,4);  // Transmit set value of buf, write response into buf for each byte sent.
+	bcm2835_spi_transfern(buf,4);  // Transmit set value of buf, write response into buf for each byte sent.
 	ans = buf[3] & 0x07;  // Read 3 LSBs of 0x19 register
 	return ans;
-
 }
 
 /*
@@ -131,7 +89,6 @@ static int  LMP90100_ReadChannel(void)
 *	The return value: Temperature
 *********************************************************************************************************
 */
-
 static float LMP90100_ReadADC(void)
 {
     float  temp_calc;
@@ -144,7 +101,7 @@ static float LMP90100_ReadADC(void)
 	buf[3] = 0x00;
 	buf[4] = 0x00;
 	buf[5] = 0x00;
-	bcm2835_aux_spi_transfern(buf,6);
+	bcm2835_spi_transfern(buf,6);
 
 	adc =  (((uint32_t) buf[3]) << 16);
 	adc += (((uint32_t) buf[4]) <<  8);
@@ -154,49 +111,6 @@ static float LMP90100_ReadADC(void)
 
     return temp_calc;
 }
-
-/*
-*********************************************************************************************************
-*	name: LMP90100_WriteReg
-*	function:  Write Register (8bit)
-*	parameter: Register ID and Register Value
-*
-*	The return value: NULL
-*********************************************************************************************************
-*/
-
-// static void LMP90100_WriteReg(uint8_t _RegID, uint8_t _RegValue)
-// {
-// 	//CS_0();	/* SPI  cs  = 0 */
-// 	LMP90100_Send8Bit(CMD_WREG);	/*Write command register */
-// 	LMP90100_Send8Bit(((_RegID >> 4) & 0x0F));  /*Write upper address nibble */
-//   LMP90100_Send8Bit((_RegID & 0xF));
-// 	LMP90100_Send8Bit(_RegValue);	/*send register value */
-// 	//CS_1();	/* SPI   cs = 1 */
-// }
-
-/*
-*********************************************************************************************************
-*	name: LMP90100_ReadReg
-*	function:  Read Register (8bit)
-*	parameter: Register ID
-*
-*	The return value: Register Value
-*********************************************************************************************************
-*/
-// static uint8_t LMP90100_ReadReg(uint8_t _RegID)
-// {
-// 	uint8_t read = 0;
-// 	//CS_0();	/* SPI  cs  = 0 */
-// 	LMP90100_Send8Bit(CMD_WREG);	/*Write command register */
-// 	LMP90100_Send8Bit(((_RegID >> 4) & 0x0F));  /*Write upper address nibble*/
-// 	LMP90100_Send8Bit((_RegID & 0xF) | 0x10);   /*Write lower nibble and set to read one byte*/
-// 	read = LMP90100_Receive8Bit();	/*send register value */
-// 	//CS_1();	/* SPI   cs = 1 */
-//     return read;
-// }
-
-
 /*
 *********************************************************************************************************
 *	name: LMP90100_DRDY
@@ -275,10 +189,10 @@ int  main()
     if (!bcm2835_init())
         return 1;
 
-		bcm2835_aux_spi_begin();
+		bcm2835_spi_begin();
 		bcm2835_spi_setBitOrder(BCM2835_SPI_BIT_ORDER_MSBFIRST);   //default
 		bcm2835_spi_setDataMode(BCM2835_SPI_MODE0);                //default
-		bcm2835_aux_spi_setClockDivider(BCM2835_SPI_CLOCK_DIVIDER_8192);//default
+		bcm2835_spi_setClockDivider(BCM2835_SPI_CLOCK_DIVIDER_8192);//default
 
     bcm2835_gpio_fsel(SPICS, BCM2835_GPIO_FSEL_OUTP);//
     bcm2835_gpio_write(SPICS, HIGH);
@@ -303,7 +217,7 @@ int  main()
     setup_buf[14] = 0x07;
     setup_buf[15] = 0x60;
 
-    bcm2835_aux_spi_transfern(setup_buf,16);
+    bcm2835_spi_transfern(setup_buf,16);
     CS_1();
 
     while(1)
@@ -329,7 +243,7 @@ int  main()
 
 	}
 	}
-    bcm2835_aux_spi_end();
+    bcm2835_spi_end();
     bcm2835_close();
 
     return 0;
