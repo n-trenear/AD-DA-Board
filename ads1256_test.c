@@ -895,10 +895,10 @@ int  main()
 	                    			printf(" %ld.%03ldV \r\n", iTemp /1000000, (iTemp%1000000)/1000);
 					}
 
-		}
+				}
 			printf("\33[%dA", (int)ch_num);
-		bsp_DelayUS(100000);
-			}
+			bsp_DelayUS(100000);
+		}
     bcm2835_spi_end();
     bcm2835_close();
 

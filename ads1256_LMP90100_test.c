@@ -20,12 +20,6 @@
        RPI_GPIO_P1_21 | | RPI_GPIO_P1_22   ->                 MISO | | IO6
        RPI_GPIO_P1_23 | | RPI_GPIO_P1_24   ->                  SCK | | CE0
                   GND | | RPI_GPIO_P1_26   ->                  GND | | CE1
-
-::if your raspberry Pi is version 1 or rev 1 or rev A
-RPI_V2_GPIO_P1_03->RPI_GPIO_P1_03
-RPI_V2_GPIO_P1_05->RPI_GPIO_P1_05
-RPI_V2_GPIO_P1_13->RPI_GPIO_P1_13
-::
 */
 
 #include <bcm2835.h>
@@ -43,8 +37,6 @@ RPI_V2_GPIO_P1_13->RPI_GPIO_P1_13
 //DRDY  -----   ctl_IO     data  starting
 //RST     -----   ctl_IO     reset
 
-
-
 //#define  DRDY  RPI_V2_GPIO_P1_11         //P0
 #define  DRDY  17
 //#define  RST  RPI_V2_GPIO_P1_12     //P1
@@ -60,18 +52,12 @@ RPI_V2_GPIO_P1_13->RPI_GPIO_P1_13
 #define RST_1() 	bcm2835_gpio_write(RST,HIGH)
 #define RST_0() 	bcm2835_gpio_write(RST,LOW)
 
-
-
 /* Unsigned integer types  */
 #define uint8_t unsigned char
 #define uint16_t unsigned short
 #define uint32_t unsigned long
 
-
-
-
 typedef enum {FALSE = 0, TRUE = !FALSE} bool;
-
 
 /* gain channel� */
 typedef enum
@@ -813,8 +799,6 @@ uint16_t Voltage_Convert(float Vref, float voltage)
 *********************************************************************************************************
 */
 void storeVolt(int32_t Vin){
-  FILE * fp;
-	
   // store voltage and time
   time_t t = time(NULL) + 36000; //current time in seconds adding 10 hours
   struct tm tm = *localtime(&t);
@@ -846,6 +830,7 @@ int  main()
 	uint8_t buf[3];
     if (!bcm2835_init())
         return 1;
+	FILE * fp;
 
     bcm2835_spi_begin();
     bcm2835_spi_setBitOrder(BCM2835_SPI_BIT_ORDER_MSBFIRST);   //default

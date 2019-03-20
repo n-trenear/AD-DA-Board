@@ -41,7 +41,7 @@
 #define MISO  9
 #define MOSI  10
 #define DRDY  17
-#define SPICS  27
+#define SPICS  22
 #define CS_1()  bcm2835_gpio_write(SPICS,HIGH)
 #define CS_0()  bcm2835_gpio_write(SPICS,LOW)
 #define CS_IS_LOW() (bcm2835_gpio_lev(SPICS) == 0)

@@ -865,6 +865,9 @@ int  main()
 		//{
 			//continue;
 		//}
+
+		fp = fopen ("VoltageReadings.csv", "a+");
+
 		while(1){
 
 	    while((ADS1256_Scan() == 0));
@@ -880,16 +883,17 @@ int  main()
 			// store temperature and time
 			time_t t = time(NULL) + 36000; //current time in seconds adding 10 hours
 			struct tm tm = *localtime(&t);
-			fp = fopen ("VoltageReadings.csv", "a+");
-   		fprintf(fp, "%d-%d-%d %d:%d:%d,%ld.%03ld\n", tm.tm_mday, tm.tm_mon + 1, tm.tm_year + 1900, tm.tm_hour, tm.tm_min, tm.tm_sec, Vin / 1000000, (Vin%1000000)/1000);
-			fclose(fp);
 
 			if (Vin < 0){
 				Vin = -Vin;
 				printf("-%ld.%03ld %03ld V \r\n", Vin / 1000000, (Vin%1000000)/1000, Vin%1000);
+				fprintf(fp, "%d-%d-%d %d:%d:%d,-%ld.%03ld\n", tm.tm_mday, tm.tm_mon + 1, tm.tm_year + 1900,
+				tm.tm_hour, tm.tm_min, tm.tm_sec, Vin / 1000000, (Vin%1000000)/1000);
 			}
 			else{
 				printf("%ld.%03ld %03ld V \r\n", Vin / 1000000, (Vin%1000000)/1000, Vin%1000);
+				fprintf(fp, "%d-%d-%d %d:%d:%d,%ld.%03ld\n", tm.tm_mday, tm.tm_mon + 1, tm.tm_year + 1900,
+				tm.tm_hour, tm.tm_min, tm.tm_sec, Vin / 1000000, (Vin%1000000)/1000);
 			}
 
 			printf("\33[%dA", 1);
