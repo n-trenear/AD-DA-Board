@@ -921,51 +921,33 @@ int  main()
     bcm2835_gpio_write(SPICS, HIGH);
     bcm2835_gpio_fsel(DRDY, BCM2835_GPIO_FSEL_INPT);
     bcm2835_gpio_set_pud(DRDY, BCM2835_GPIO_PUD_UP);
-    //ADS1256_WriteReg(REG_MUX,0x01);
-    //ADS1256_WriteReg(REG_ADCON,0x20);
-   // ADS1256_CfgADC(ADS1256_GAIN_1, ADS1256_15SPS);
-   id = ADS1256_ReadChipID();
-   printf("\r\n");
-   printf("ID=\r\n");
-	if (id != 3)
-	{
-		printf("Error, ASD1256 Chip ID = 0x%d\r\n", (int)id);
-	}
-	else
-	{
-		printf("Ok, ASD1256 Chip ID = 0x%d\r\n", (int)id);
-	}
+
   ADS1256_CfgADC(ADS1256_GAIN_1, ADS1256_15SPS);
   ADS1256_StartScan(0);
 	ch_num = 8; // number of channels.
-	//if (ADS1256_Scan() == 0)
-		//{
-			//continue;
-		//}
 
-    //Todo:  Create Setup function
-      LMP_CS_0();
-      CS_1();
-      setup_buf[0] = 0x10;
-      setup_buf[1] = 0x01;
-      setup_buf[2] = 0x02;
-      setup_buf[3] = 0x0A;   //Set current source to 1mA
-      setup_buf[4] = 0x0F;
-      setup_buf[5] = 0x98;   //Set continuous scan on CH0 - CH3 only.
-      setup_buf[6] = 0x10;
-      setup_buf[7] = 0x02;
-      setup_buf[8] = 0x01;
-      setup_buf[9] = 0x60;
-      setup_buf[10] = 0x03;
-      setup_buf[11] = 0x60;
-      setup_buf[12] = 0x05;
-      setup_buf[13] = 0x60;
-      setup_buf[14] = 0x07;
-      setup_buf[15] = 0x60;
-
-      bcm2835_spi_transfern(setup_buf,16);
-      LMP_CS_1();
-      CS_0();
+      // LMP_CS_0();
+      // CS_1();
+      // setup_buf[0] = 0x10;
+      // setup_buf[1] = 0x01;
+      // setup_buf[2] = 0x02;
+      // setup_buf[3] = 0x0A;   //Set current source to 1mA
+      // setup_buf[4] = 0x0F;
+      // setup_buf[5] = 0x98;   //Set continuous scan on CH0 - CH3 only.
+      // setup_buf[6] = 0x10;
+      // setup_buf[7] = 0x02;
+      // setup_buf[8] = 0x01;
+      // setup_buf[9] = 0x60;
+      // setup_buf[10] = 0x03;
+      // setup_buf[11] = 0x60;
+      // setup_buf[12] = 0x05;
+      // setup_buf[13] = 0x60;
+      // setup_buf[14] = 0x07;
+      // setup_buf[15] = 0x60;
+			//
+      // bcm2835_spi_transfern(setup_buf,16);
+      // LMP_CS_1();
+      // CS_0();
 
 		while(1){
 
@@ -991,22 +973,22 @@ int  main()
 
 			bsp_DelayUS(3000);
 
-      //if (LMP90100_DRDY())
-    	if (cs_state == 1)
-    	{
-         LMP_CS_0();
-    	   cs_state = 0;
-    	}
-
-    	if (LMP90100_DRDY())
-    	{
-    		if (cs_state == 0)
-    		{
-          LMP_CS_1();
-    			cs_state = 1;
-    		}
-    		bsp_DelayUS(3000);
-		}
+    //   //if (LMP90100_DRDY())
+    // 	if (cs_state == 1)
+    // 	{
+    //      LMP_CS_0();
+    // 	   cs_state = 0;
+    // 	}
+		//
+    // 	if (LMP90100_DRDY())
+    // 	{
+    // 		if (cs_state == 0)
+    // 		{
+    //       LMP_CS_1();
+    // 			cs_state = 1;
+    // 		}
+    // 		bsp_DelayUS(3000);
+		// }
 	}
     bcm2835_spi_end();
     bcm2835_close();

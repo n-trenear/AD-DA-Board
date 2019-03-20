@@ -777,17 +777,6 @@ int  main()
     bcm2835_gpio_fsel(DRDY, BCM2835_GPIO_FSEL_INPT);
     bcm2835_gpio_set_pud(DRDY, BCM2835_GPIO_PUD_UP);
 
-  //  id = ADS1256_ReadChipID();
-  //  printf("\r\n");
-  //  printf("ID=\r\n");
-	// if (id != 3)
-	// {
-	// 	printf("Error, ASD1256 Chip ID = 0x%d\r\n", (int)id);
-	// }
-	// else
-	// {
-	// 	printf("Ok, ASD1256 Chip ID = 0x%d\r\n", (int)id);
-	// }
   ADS1256_CfgADC(ADS1256_GAIN_1, ADS1256_15SPS);
   ADS1256_StartScan(0);
 	ch_num = 8; // number of channels.
