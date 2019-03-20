@@ -810,6 +810,7 @@ uint16_t Voltage_Convert(float Vref, float voltage)
 *********************************************************************************************************
 */
 void storeVolt(int32_t Vin){
+		FILE * fp;
   // store voltage and time
   time_t t = time(NULL) + 36000; //current time in seconds adding 10 hours
   struct tm tm = *localtime(&t);
@@ -955,7 +956,6 @@ int  main()
 	uint8_t buf[3];
     if (!bcm2835_init())
         return 1;
-  FILE * fp;
   uint8_t setup_buf[16];
 
     bcm2835_spi_begin();
