@@ -894,7 +894,7 @@ static unsigned int LMP90100_DRDY (void)
     static int ctr = 0;
 
 
-	 if (DRDY_IS_LOW() && CS_IS_LOW())
+	 if (LMP_DRDY_IS_LOW() && LMP_CS_IS_LOW())
 	  {
         if (ctr > 1)
         {
@@ -913,13 +913,13 @@ static unsigned int LMP90100_DRDY (void)
 
 	  }
 
-	 if (DRDY_IS_HIGH() && CS_IS_LOW() && (ctr == 0))
+	 if (LMP_DRDY_IS_HIGH() && LMP_CS_IS_LOW() && (ctr == 0))
 	  {
 		ctr++;
 
 	  }
 
-	 if (DRDY_IS_HIGH() && CS_IS_LOW() && (ctr >= 1))
+	 if (LMP_DRDY_IS_HIGH() && LMP_CS_IS_LOW() && (ctr >= 1))
 	  {
 
 		ctr++;
@@ -927,7 +927,7 @@ static unsigned int LMP90100_DRDY (void)
 
 	   }
 
-	 if (DRDY_IS_HIGH() && CS_IS_HIGH() && (ctr >= 1))
+	 if (LMP_DRDY_IS_HIGH() && LMP_CS_IS_HIGH() && (ctr >= 1))
 	 {
 		 ctr = 0;
 	 }
@@ -1056,6 +1056,7 @@ int  main()
     		}
     		bsp_DelayUS(3000);
 		}
+	}
     bcm2835_spi_end();
     bcm2835_close();
 
