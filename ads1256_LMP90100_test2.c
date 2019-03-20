@@ -66,12 +66,12 @@ void  bsp_DelayUS(uint64_t micros)
 *	The return value: NULL
 *********************************************************************************************************
 */
-static void LMP90100_Send8Bit(uint8_t _data)
-{
-
-	//bsp_DelayUS(2);
-	bcm2835_spi_transfer(_data);
-}
+// static void LMP90100_Send8Bit(uint8_t _data)
+// {
+//
+// 	//bsp_DelayUS(2);
+// 	bcm2835_spi_transfer(_data);
+// }
 
 /*
 *********************************************************************************************************
@@ -81,12 +81,12 @@ static void LMP90100_Send8Bit(uint8_t _data)
 *	The return value: NULL
 *********************************************************************************************************
 */
-static uint8_t LMP90100_Receive8Bit(void)
-{
-	uint8_t read = 0;
-	read = bcm2835_spi_transfer(0);
-	return read;
-}
+// static uint8_t LMP90100_Receive8Bit(void)
+// {
+// 	uint8_t read = 0;
+// 	read = bcm2835_spi_transfer(0);
+// 	return read;
+// }
 
 /*
 *********************************************************************************************************
@@ -165,15 +165,15 @@ static float LMP90100_ReadADC(void)
 *********************************************************************************************************
 */
 
-static void LMP90100_WriteReg(uint8_t _RegID, uint8_t _RegValue)
-{
-	//CS_0();	/* SPI  cs  = 0 */
-	LMP90100_Send8Bit(CMD_WREG);	/*Write command register */
-	LMP90100_Send8Bit(((_RegID >> 4) & 0x0F));  /*Write upper address nibble */
-  LMP90100_Send8Bit((_RegID & 0xF));
-	LMP90100_Send8Bit(_RegValue);	/*send register value */
-	//CS_1();	/* SPI   cs = 1 */
-}
+// static void LMP90100_WriteReg(uint8_t _RegID, uint8_t _RegValue)
+// {
+// 	//CS_0();	/* SPI  cs  = 0 */
+// 	LMP90100_Send8Bit(CMD_WREG);	/*Write command register */
+// 	LMP90100_Send8Bit(((_RegID >> 4) & 0x0F));  /*Write upper address nibble */
+//   LMP90100_Send8Bit((_RegID & 0xF));
+// 	LMP90100_Send8Bit(_RegValue);	/*send register value */
+// 	//CS_1();	/* SPI   cs = 1 */
+// }
 
 /*
 *********************************************************************************************************
@@ -184,17 +184,17 @@ static void LMP90100_WriteReg(uint8_t _RegID, uint8_t _RegValue)
 *	The return value: Register Value
 *********************************************************************************************************
 */
-static uint8_t LMP90100_ReadReg(uint8_t _RegID)
-{
-	uint8_t read = 0;
-	//CS_0();	/* SPI  cs  = 0 */
-	LMP90100_Send8Bit(CMD_WREG);	/*Write command register */
-	LMP90100_Send8Bit(((_RegID >> 4) & 0x0F));  /*Write upper address nibble*/
-	LMP90100_Send8Bit((_RegID & 0xF) | 0x10);   /*Write lower nibble and set to read one byte*/
-	read = LMP90100_Receive8Bit();	/*send register value */
-	//CS_1();	/* SPI   cs = 1 */
-    return read;
-}
+// static uint8_t LMP90100_ReadReg(uint8_t _RegID)
+// {
+// 	uint8_t read = 0;
+// 	//CS_0();	/* SPI  cs  = 0 */
+// 	LMP90100_Send8Bit(CMD_WREG);	/*Write command register */
+// 	LMP90100_Send8Bit(((_RegID >> 4) & 0x0F));  /*Write upper address nibble*/
+// 	LMP90100_Send8Bit((_RegID & 0xF) | 0x10);   /*Write lower nibble and set to read one byte*/
+// 	read = LMP90100_Receive8Bit();	/*send register value */
+// 	//CS_1();	/* SPI   cs = 1 */
+//     return read;
+// }
 
 
 /*
