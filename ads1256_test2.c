@@ -197,12 +197,6 @@ static const uint8_t s_tabDataRate[ADS1256_DRATE_MAX] =
 	0x03
 };
 
-
-
-
-
-
-
 void  bsp_DelayUS(uint64_t micros);
 void ADS1256_StartScan(uint8_t _ucScanMode);
 static void ADS1256_Send8Bit(uint8_t _data);
@@ -229,32 +223,6 @@ void  bsp_DelayUS(uint64_t micros)
 {
 		bcm2835_delayMicroseconds (micros);
 }
-
-
-/*
-*********************************************************************************************************
-*	name: bsp_InitADS1256
-*	function: Configuration of the STM32 GPIO and SPI interface��The connection ADS1256
-*	parameter: NULL
-*	The return value: NULL
-*********************************************************************************************************
-*/
-
-
-void bsp_InitADS1256(void)
-{
-#ifdef SOFT_SPI
-	CS_1();
-	SCK_0();
-	DI_0();
-#endif
-
-//ADS1256_CfgADC(ADS1256_GAIN_1, ADS1256_1000SPS);	/* ����ADC������ ����1:1, ������������ 1KHz */
-}
-
-
-
-
 /*
 *********************************************************************************************************
 *	name: ADS1256_StartScan
@@ -279,7 +247,6 @@ void ADS1256_StartScan(uint8_t _ucScanMode)
 	}
 
 }
-
 /*
 *********************************************************************************************************
 *	name: ADS1256_Send8Bit
@@ -391,8 +358,6 @@ void ADS1256_CfgADC(ADS1256_GAIN_E _gain, ADS1256_DRATE_E _drate)
 
 	bsp_DelayUS(50);
 }
-
-
 /*
 *********************************************************************************************************
 *	name: ADS1256_DelayDATA
@@ -409,10 +374,6 @@ static void ADS1256_DelayDATA(void)
 	*/
 	bsp_DelayUS(10);	/* The minimum time delay 6.5us */
 }
-
-
-
-
 /*
 *********************************************************************************************************
 *	name: ADS1256_Recive8Bit
@@ -769,26 +730,6 @@ uint8_t ADS1256_Scan(void)
 }
 /*
 *********************************************************************************************************
-*	name: Write_DAC8552
-*	function:  DAC send data
-*	parameter: channel : output channel number
-*			   data : output DAC value
-*	The return value:  NULL
-*********************************************************************************************************
-*/
-void Write_DAC8552(uint8_t channel, uint16_t Data)
-{
-	uint8_t ch_num;
-
-	 CS_1() ;
-	 CS_0() ;
-      bcm2835_spi_transfer(channel);
-      bcm2835_spi_transfer((Data>>8));
-      bcm2835_spi_transfer((Data&0xff));
-      CS_1() ;
-}
-/*
-*********************************************************************************************************
 *	name: Voltage_Convert
 *	function:  Voltage value conversion function
 *	parameter: Vref : The reference voltage 3.3V or 5V
@@ -826,15 +767,6 @@ int  main()
         return 1;
 	FILE * fp;
 
-
-
-/*
-    bcm2835_spi_begin();
-    bcm2835_spi_setBitOrder(BCM2835_SPI_BIT_ORDER_LSBFIRST );      // The default
-    bcm2835_spi_setDataMode(BCM2835_SPI_MODE1);                   // The default
-    bcm2835_spi_setClockDivider(BCM2835_SPI_CLOCK_DIVIDER_1024); // The default
-*/
-
     bcm2835_spi_begin();
     bcm2835_spi_setBitOrder(BCM2835_SPI_BIT_ORDER_MSBFIRST);   //default
     bcm2835_spi_setDataMode(BCM2835_SPI_MODE1);                //default
@@ -844,27 +776,21 @@ int  main()
     bcm2835_gpio_write(SPICS, HIGH);
     bcm2835_gpio_fsel(DRDY, BCM2835_GPIO_FSEL_INPT);
     bcm2835_gpio_set_pud(DRDY, BCM2835_GPIO_PUD_UP);
-    //ADS1256_WriteReg(REG_MUX,0x01);
-    //ADS1256_WriteReg(REG_ADCON,0x20);
-   // ADS1256_CfgADC(ADS1256_GAIN_1, ADS1256_15SPS);
-   id = ADS1256_ReadChipID();
-   printf("\r\n");
-   printf("ID=\r\n");
-	if (id != 3)
-	{
-		printf("Error, ASD1256 Chip ID = 0x%d\r\n", (int)id);
-	}
-	else
-	{
-		printf("Ok, ASD1256 Chip ID = 0x%d\r\n", (int)id);
-	}
+
+  //  id = ADS1256_ReadChipID();
+  //  printf("\r\n");
+  //  printf("ID=\r\n");
+	// if (id != 3)
+	// {
+	// 	printf("Error, ASD1256 Chip ID = 0x%d\r\n", (int)id);
+	// }
+	// else
+	// {
+	// 	printf("Ok, ASD1256 Chip ID = 0x%d\r\n", (int)id);
+	// }
   ADS1256_CfgADC(ADS1256_GAIN_1, ADS1256_15SPS);
   ADS1256_StartScan(0);
 	ch_num = 8; // number of channels.
-	//if (ADS1256_Scan() == 0)
-		//{
-			//continue;
-		//}
 
 		fp = fopen ("VoltageReadings.csv", "a+");
 

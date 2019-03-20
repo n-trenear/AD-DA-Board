@@ -226,32 +226,6 @@ void  bsp_DelayUS(uint64_t micros)
 {
 		bcm2835_delayMicroseconds (micros);
 }
-
-
-/*
-*********************************************************************************************************
-*	name: bsp_InitADS1256
-*	function: Configuration of the STM32 GPIO and SPI interface��The connection ADS1256
-*	parameter: NULL
-*	The return value: NULL
-*********************************************************************************************************
-*/
-
-
-void bsp_InitADS1256(void)
-{
-#ifdef SOFT_SPI
-	CS_1();
-	SCK_0();
-	DI_0();
-#endif
-
-//ADS1256_CfgADC(ADS1256_GAIN_1, ADS1256_1000SPS);	/* ����ADC������ ����1:1, ������������ 1KHz */
-}
-
-
-
-
 /*
 *********************************************************************************************************
 *	name: ADS1256_StartScan
@@ -766,26 +740,6 @@ uint8_t ADS1256_Scan(void)
 }
 /*
 *********************************************************************************************************
-*	name: Write_DAC8552
-*	function:  DAC send data
-*	parameter: channel : output channel number
-*			   data : output DAC value
-*	The return value:  NULL
-*********************************************************************************************************
-*/
-void Write_DAC8552(uint8_t channel, uint16_t Data)
-{
-	uint8_t ch_num;
-
-	 CS_1() ;
-	 CS_0() ;
-      bcm2835_spi_transfer(channel);
-      bcm2835_spi_transfer((Data>>8));
-      bcm2835_spi_transfer((Data&0xff));
-      CS_1() ;
-}
-/*
-*********************************************************************************************************
 *	name: Voltage_Convert
 *	function:  Voltage value conversion function
 *	parameter: Vref : The reference voltage 3.3V or 5V
@@ -1040,8 +994,6 @@ int  main()
       //if (LMP90100_DRDY())
     	if (cs_state == 1)
     	{
-
-    	   CS_1();
          LMP_CS_0();
     	   cs_state = 0;
     	}
@@ -1050,7 +1002,6 @@ int  main()
     	{
     		if (cs_state == 0)
     		{
-    			CS_0();
           LMP_CS_1();
     			cs_state = 1;
     		}
