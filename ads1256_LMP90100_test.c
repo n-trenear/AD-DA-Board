@@ -834,10 +834,10 @@ static unsigned int LMP90100_DRDY (void)
 	int result;
     static int ctr = 0;
 
-printf("%s\n", "sort of working");
 
 	 if (LMP_DRDY_IS_LOW() && LMP_CS_IS_LOW())
 	  {
+			printf("%s\n", "sort of working");
         if (ctr > 1)
         {
 
