@@ -843,6 +843,8 @@ static unsigned int LMP90100_DRDY (void)
           Temp_Reading = LMP90100_ReadADC();
           Channel = LMP90100_ReadChannel();
           printf("Ch:%02X Temp: %3.1f \n",Channel,Temp_Reading);
+					printf("%s\n", "Not working");
+
           ctr = 0;
           result = 1;
         }
@@ -968,7 +970,6 @@ int  main()
     	{
          LMP_CS_0();
     	   cs_state = 0;
-				 printf("%s\n", "Not working");
     	}
 
     	if (LMP90100_DRDY())
