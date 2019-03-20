@@ -52,6 +52,19 @@
 #define RST_1() 	bcm2835_gpio_write(RST,HIGH)
 #define RST_0() 	bcm2835_gpio_write(RST,LOW)
 
+#define MISO  9
+#define MOSI  10
+#define DRDY  17
+#define SPICS2  27
+#define LMP_CS_1()  bcm2835_gpio_write(SPICS2,HIGH)
+#define LMP_CS_0()  bcm2835_gpio_write(SPICS2,LOW)
+#define LMP_CS_IS_LOW() (bcm2835_gpio_lev(SPICS2) == 0)
+#define LMP_CS_IS_HIGH() (bcm2835_gpio_lev(SPICS2) == 1)
+#define LMP_DRDY_IS_LOW()  (bcm2835_gpio_lev(MISO)==0)
+#define LMP_DRDY_IS_HIGH() (bcm2835_gpio_lev(MISO)==1)
+#define CMD_WREG 0x10
+#define CMD_RREG 0x90
+
 /* Unsigned integer types  */
 #define uint8_t unsigned char
 #define uint16_t unsigned short
@@ -812,6 +825,119 @@ void storeVolt(int32_t Vin){
 }
 /*
 *********************************************************************************************************
+*	name: LMP90100_ReadChannel
+*	function: Write the corresponding register
+*	parameter: NULL
+*
+*	The return value: ADC channel scanned
+*********************************************************************************************************
+*/
+static int  LMP90100_ReadChannel(void)
+{
+	uint8_t buf[4];
+	uint8_t ans;
+
+	buf[0] = 0x10;  // Set Upper nibble of register to read
+	buf[1] = 0x01;  // Upper nibble is 1
+	buf[2] = 0x89;  // Read 0x19 register
+	buf[3] = 0x00;  // Transmit zero.. Response will be written to this value
+	bcm2835_spi_transfern(buf,4);  // Transmit set value of buf, write response into buf for each byte sent.
+	ans = buf[3] & 0x07;  // Read 3 LSBs of 0x19 register
+	return ans;
+}
+
+/*
+*********************************************************************************************************
+*	name: LMP90100_ReadADC
+*	function:  Read the ADC registers 1A,1B,1C (24bit) and calculate temperature
+*	parameter: NULL
+*
+*	The return value: Temperature
+*********************************************************************************************************
+*/
+static float LMP90100_ReadADC(void)
+{
+    float  temp_calc;
+	uint8_t buf[6];
+	int32_t adc;
+
+	buf[0] = 0x10;
+	buf[1] = 0x01;
+	buf[2] = 0xCA;
+	buf[3] = 0x00;
+	buf[4] = 0x00;
+	buf[5] = 0x00;
+	bcm2835_spi_transfern(buf,6);
+
+	adc =  (((uint32_t) buf[3]) << 16);
+	adc += (((uint32_t) buf[4]) <<  8);
+    adc += (((uint32_t) buf[5]) <<  0);
+
+    temp_calc = (((float)adc) /16777216*4015 - 100)/0.3925;
+
+    return temp_calc;
+}
+/*
+*********************************************************************************************************
+*	name: LMP90100_DRDY
+*	function: Detect ADC ready pulse on MISO line and initate ADC read and ADC channel number read
+*	parameter: NULL
+*
+*	The return value: 1 on success else return 0
+*********************************************************************************************************
+*/
+
+static unsigned int LMP90100_DRDY (void)
+{
+	int Channel;
+	float Temp_Reading;
+	int result;
+    static int ctr = 0;
+
+
+	 if (DRDY_IS_LOW() && CS_IS_LOW())
+	  {
+        if (ctr > 1)
+        {
+
+          Temp_Reading = LMP90100_ReadADC();
+          Channel = LMP90100_ReadChannel();
+          printf("Ch:%02X Temp: %3.1f \r",Channel,Temp_Reading);
+          ctr = 0;
+          result = 1;
+        }
+        else
+        {
+        	ctr = 0;
+        	result = 0;
+        }
+
+	  }
+
+	 if (DRDY_IS_HIGH() && CS_IS_LOW() && (ctr == 0))
+	  {
+		ctr++;
+
+	  }
+
+	 if (DRDY_IS_HIGH() && CS_IS_LOW() && (ctr >= 1))
+	  {
+
+		ctr++;
+		//printf("Detect %02X\r",ctr);
+
+	   }
+
+	 if (DRDY_IS_HIGH() && CS_IS_HIGH() && (ctr >= 1))
+	 {
+		 ctr = 0;
+	 }
+
+	//bsp_DelayUS(5000);
+	return result;
+}
+/*
+*********************************************************************************************************
 *	name: main
 *	function:
 *	parameter: NULL
@@ -821,6 +947,7 @@ void storeVolt(int32_t Vin){
 
 int  main()
 {
+  unsigned int cs_state = 1;
   uint8_t id;
   int32_t adc[8];
 	int32_t volt[8];
