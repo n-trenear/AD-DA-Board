@@ -1,7 +1,7 @@
 /*
- * ADS1256_test.c:
- *	Very simple program to test the serial port. Expects
- *	the port to be looped back to itself
+ * ads1256_LMP90100_test.c:
+ *	Created on: 20/3/2019
+ *	Author: Nathan Trenear
  *
  */
 
@@ -54,7 +54,6 @@
 
 #define MISO  9
 #define MOSI  10
-#define DRDY  17
 #define SPICS2  27
 #define LMP_CS_1()  bcm2835_gpio_write(SPICS2,HIGH)
 #define LMP_CS_0()  bcm2835_gpio_write(SPICS2,LOW)
@@ -134,8 +133,6 @@ typedef struct
 	uint8_t ScanMode;	/*Scanning mode,   0  Single-ended input  8 channel�� 1 Differential input  4 channel*/
 }ADS1256_VAR_T;
 
-
-
 /*Register definition�� Table 23. Register Map --- ADS1256 datasheet Page 30*/
 enum
 {
@@ -172,7 +169,6 @@ enum
 	CMD_RESET   = 0xFE, // Reset to Power-Up Values 1111   1110 (FEh)
 };
 
-
 ADS1256_VAR_T g_tADS1256;
 static const uint8_t s_tabDataRate[ADS1256_DRATE_MAX] =
 {
@@ -194,12 +190,6 @@ static const uint8_t s_tabDataRate[ADS1256_DRATE_MAX] =
 	0x03
 };
 
-
-
-
-
-
-
 void  bsp_DelayUS(uint64_t micros);
 void ADS1256_StartScan(uint8_t _ucScanMode);
 static void ADS1256_Send8Bit(uint8_t _data);
@@ -218,9 +208,6 @@ static int32_t ADS1256_ReadData(void);
 int32_t ADS1256_GetAdc(uint8_t _ch);
 void ADS1256_ISR(void);
 uint8_t ADS1256_Scan(void);
-
-
-
 
 void  bsp_DelayUS(uint64_t micros)
 {
@@ -975,13 +962,13 @@ int  main()
 
 			bsp_DelayUS(3000);
 			CS_1();
-			LMP_CS_1();
 
       //if (LMP90100_DRDY())
     	if (cs_state == 1)
     	{
          LMP_CS_0();
     	   cs_state = 0;
+				 printf("%s\n", "Not working");
     	}
 
     	if (LMP90100_DRDY())
@@ -991,11 +978,11 @@ int  main()
           LMP_CS_1();
     			cs_state = 1;
     		}
+			}
     		bsp_DelayUS(3000);
 			  CS_0();
 				LMP_CS_1();
 		}
-	}
     bcm2835_spi_end();
     bcm2835_close();
 
