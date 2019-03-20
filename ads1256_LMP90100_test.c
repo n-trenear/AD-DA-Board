@@ -62,8 +62,6 @@
 #define LMP_CS_IS_HIGH() (bcm2835_gpio_lev(SPICS2) == 1)
 #define LMP_DRDY_IS_LOW()  (bcm2835_gpio_lev(MISO)==0)
 #define LMP_DRDY_IS_HIGH() (bcm2835_gpio_lev(MISO)==1)
-#define CMD_WREG 0x10
-#define CMD_RREG 0x90
 
 /* Unsigned integer types  */
 #define uint8_t unsigned char
@@ -957,6 +955,8 @@ int  main()
 	uint8_t buf[3];
     if (!bcm2835_init())
         return 1;
+  FILE * fp;
+  uint8_t setup_buf[16];
 
     bcm2835_spi_begin();
     bcm2835_spi_setBitOrder(BCM2835_SPI_BIT_ORDER_MSBFIRST);   //default
