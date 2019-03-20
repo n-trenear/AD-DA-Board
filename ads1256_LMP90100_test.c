@@ -972,23 +972,27 @@ int  main()
 			}
 
 			bsp_DelayUS(3000);
+			CS_1();
+			LMP_CS_1()
 
-    //   //if (LMP90100_DRDY())
-    // 	if (cs_state == 1)
-    // 	{
-    //      LMP_CS_0();
-    // 	   cs_state = 0;
-    // 	}
-		//
-    // 	if (LMP90100_DRDY())
-    // 	{
-    // 		if (cs_state == 0)
-    // 		{
-    //       LMP_CS_1();
-    // 			cs_state = 1;
-    // 		}
-    // 		bsp_DelayUS(3000);
-		// }
+      //if (LMP90100_DRDY())
+    	if (cs_state == 1)
+    	{
+         LMP_CS_0();
+    	   cs_state = 0;
+    	}
+
+    	if (LMP90100_DRDY())
+    	{
+    		if (cs_state == 0)
+    		{
+          LMP_CS_1();
+    			cs_state = 1;
+    		}
+    		bsp_DelayUS(3000);
+			  CS_0();
+				LMP_CS_0();
+		}
 	}
     bcm2835_spi_end();
     bcm2835_close();
