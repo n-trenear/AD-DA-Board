@@ -39,19 +39,6 @@
 //RST     -----   ctl_IO     reset
 
 //ADS1256 macros
-#define MISO  9
-#define MOSI  10
-#define SPICS 22
-#define CS_1() bcm2835_gpio_write(SPICS,HIGH)
-#define CS_0() bcm2835_gpio_write(SPICS,LOW)
-#define CS_IS_LOW()  (bcm2835_gpio_lev(SPICS) == 0)
-#define CS_IS_HIGH() (bcm2835_gpio_lev(SPICS) == 1)
-#define DRDY_IS_LOW()  (bcm2835_gpio_lev(MISO)==0)
-#define DRDY_IS_HIGH() (bcm2835_gpio_lev(MISO)==1)
-#define CMD_WREG 0x10
-#define CMD_RREG 0x90
-
-//LMP90100 macros
 //#define  DRDY  RPI_V2_GPIO_P1_11         //P0
 #define  DRDY  17
 //#define  RST  RPI_V2_GPIO_P1_12     //P1
@@ -66,6 +53,19 @@
 
 #define RST_1() 	bcm2835_gpio_write(RST,HIGH)
 #define RST_0() 	bcm2835_gpio_write(RST,LOW)
+
+//LMP90100 macros
+#define MISO_AUX  19
+#define MOSI_AUX  20
+#define SPICS_AUX 26
+#define CS_AUX_1() bcm2835_gpio_write(SPICS_AUX,HIGH)
+#define CS_AUX_0() bcm2835_gpio_write(SPICS_AUX,LOW)
+#define CS_AUX_IS_LOW()  (bcm2835_gpio_lev(SPICS_AUX) == 0)
+#define CS_AUX_IS_HIGH() (bcm2835_gpio_lev(SPICS_AUX) == 1)
+#define DRDY_AUX_IS_LOW()  (bcm2835_gpio_lev(MISO_AUX)==0)
+#define DRDY_AUX_IS_HIGH() (bcm2835_gpio_lev(MISO_AUX)==1)
+#define CMD_WREG 0x10
+#define CMD_RREG 0x90
 
 typedef enum {FALSE = 0, TRUE = !FALSE} bool;
 
@@ -263,7 +263,7 @@ static unsigned int LMP90100_DRDY (void)
   static int ctr = 0;
 
 
-	if (DRDY_IS_LOW() && CS_IS_LOW())
+	if (DRDY_AUX_IS_LOW() && CS_AUX_IS_LOW())
 	{
   	if (ctr > 1)
     {
@@ -280,11 +280,11 @@ static unsigned int LMP90100_DRDY (void)
     }
 	}
 
-	if (DRDY_IS_HIGH() && CS_IS_LOW())
+	if (DRDY_AUX_IS_HIGH() && CS_AUX_IS_LOW())
 	{
 		ctr++;
 	}
-	if (DRDY_IS_HIGH() && CS_IS_HIGH() && (ctr >= 1))
+	if (DRDY_AUX_IS_HIGH() && CS_AUX_IS_HIGH() && (ctr >= 1))
 	{
 		ctr = 0;
 	}
@@ -304,7 +304,7 @@ static unsigned int LMP90100_DRDY (void)
 static void LMP90100_Setup(void){
 	uint8_t setup_buf[16];
 
-  CS_0();
+  CS_AUX_0();
   setup_buf[0] = 0x10;
   setup_buf[1] = 0x01;
   setup_buf[2] = 0x02;
@@ -323,7 +323,7 @@ static void LMP90100_Setup(void){
   setup_buf[15] = 0x60;
 
   bcm2835_aux_spi_transfern(setup_buf,16);
-  CS_1();
+  CS_AUX_1();
 }
 
 /*
@@ -341,7 +341,7 @@ static void LMP90100_DispTemp(void){
 		//if (LMP90100_DRDY())
 		if (cs_state == 1)
 		{
-			CS_0();
+			CS_AUX_0();
 			cs_state = 0;
 		}
 
@@ -349,7 +349,7 @@ static void LMP90100_DispTemp(void){
 		{
 			if (cs_state == 0)
 			{
-				CS_1();
+				CS_AUX_1();
 				cs_state = 1;
 			}
 			bsp_DelayUS(3000);
