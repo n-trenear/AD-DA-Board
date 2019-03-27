@@ -234,8 +234,7 @@ void  bsp_DelayUS(uint64_t micros)
 void ADS1256_StartScan(uint8_t _ucScanMode)
 {
 	g_tADS1256.ScanMode = _ucScanMode;
-	/* ��ʼɨ��ǰ, �������������� */
-	{
+
 		uint8_t ch_num;
 
 		g_tADS1256.Channel = 0;
@@ -244,8 +243,6 @@ void ADS1256_StartScan(uint8_t _ucScanMode)
 		{
 			g_tADS1256.AdcNow[ch_num] = 0;
 		}
-	}
-
 }
 /*
 *********************************************************************************************************
@@ -257,7 +254,6 @@ void ADS1256_StartScan(uint8_t _ucScanMode)
 */
 static void ADS1256_Send8Bit(uint8_t _data)
 {
-
 	bsp_DelayUS(2);
 	bcm2835_spi_transfer(_data);
 }
@@ -747,6 +743,29 @@ uint16_t Voltage_Convert(float Vref, float voltage)
 
 /*
 *********************************************************************************************************
+*	name: storeVoltage
+*	function:  Save voltage reading as csv with time stamp
+*	parameter: Vin : The voltage to be saved
+*
+*	The return value:  NULL
+*********************************************************************************************************
+*/
+void storeVoltage(int32_t Vin){
+	FILE * fp;
+	fp = fopen ("VoltageReadings.csv", "a+");
+
+	// store temperature and time
+	time_t t = time(NULL) + 36000; //current time in seconds adding 10 hours
+	struct tm tm = *localtime(&t);
+
+	fprintf(fp, "%d-%d-%d %d:%d:%d,%ld.%03ld\n", tm.tm_mday, tm.tm_mon + 1, tm.tm_year + 1900,
+	tm.tm_hour, tm.tm_min, tm.tm_sec, Vin / 1000000, (Vin%1000000)/1000);
+
+	fclose(fp);
+}
+
+/*
+*********************************************************************************************************
 *	name: main
 *	function:
 *	parameter: NULL
@@ -765,7 +784,6 @@ int  main()
 	uint8_t buf[3];
     if (!bcm2835_init())
         return 1;
-	FILE * fp;
 
     bcm2835_spi_begin();
     bcm2835_spi_setBitOrder(BCM2835_SPI_BIT_ORDER_MSBFIRST);   //default
@@ -779,9 +797,8 @@ int  main()
 
   ADS1256_CfgADC(ADS1256_GAIN_1, ADS1256_15SPS);
   ADS1256_StartScan(0);
-	ch_num = 8; // number of channels.
+	ch_num = 2; // number of channels.
 
-		fp = fopen ("VoltageReadings.csv", "a+");
 
 		while(1){
 
@@ -789,32 +806,24 @@ int  main()
 
 			for (i = 0; i < ch_num; i++)
 			{
-				adc[i] = ADS1256_GetAdc(i);
-	              	 volt[i] = (adc[i] * 100) / 167;
+				adc[i] = ADS1256_GetAdc(i + 6); //+6 to just read the last two channels
+	      volt[i] = (adc[i] * 100) / 167;
 			}
 
 			Vin = (volt[7] - volt[6]) / 8 * ((1000 + 100000) / 1000); /* uV  */
 
-			// store temperature and time
-			time_t t = time(NULL) + 36000; //current time in seconds adding 10 hours
-			struct tm tm = *localtime(&t);
-
 			if (Vin < 0){
 				Vin = -Vin;
 				printf("-%ld.%03ld %03ld V \r\n", Vin / 1000000, (Vin%1000000)/1000, Vin%1000);
-				fprintf(fp, "%d-%d-%d %d:%d:%d,-%ld.%03ld\n", tm.tm_mday, tm.tm_mon + 1, tm.tm_year + 1900,
-				tm.tm_hour, tm.tm_min, tm.tm_sec, Vin / 1000000, (Vin%1000000)/1000);
+				storeVoltage(Vin);
 			}
 			else{
 				printf("%ld.%03ld %03ld V \r\n", Vin / 1000000, (Vin%1000000)/1000, Vin%1000);
-				fprintf(fp, "%d-%d-%d %d:%d:%d,%ld.%03ld\n", tm.tm_mday, tm.tm_mon + 1, tm.tm_year + 1900,
-				tm.tm_hour, tm.tm_min, tm.tm_sec, Vin / 1000000, (Vin%1000000)/1000);
+				storeVoltage(Vin);
 			}
-
 			printf("\33[%dA", 1);
 			bsp_DelayUS(100000);
 		}
-		fclose(fp);
     bcm2835_spi_end();
     bcm2835_close();
 

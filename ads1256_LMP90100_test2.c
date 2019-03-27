@@ -1,8 +1,8 @@
 /*
  * main.c
  *
- *  Created on: 04/02/2019
- *      Author: Shane Goodwin
+ * Created on: 27/03/2019
+ * Author: Nahtan Trenear
 */
 
 /*
@@ -40,11 +40,10 @@
 
 #define MISO  19
 #define MOSI  20
-#define DRDY  17
-#define SPICS  26
-#define CS_1()  bcm2835_gpio_write(SPICS,HIGH)
-#define CS_0()  bcm2835_gpio_write(SPICS,LOW)
-#define CS_IS_LOW() (bcm2835_gpio_lev(SPICS) == 0)
+#define SPICS 26
+#define CS_1() bcm2835_gpio_write(SPICS,HIGH)
+#define CS_0() bcm2835_gpio_write(SPICS,LOW)
+#define CS_IS_LOW()  (bcm2835_gpio_lev(SPICS) == 0)
 #define CS_IS_HIGH() (bcm2835_gpio_lev(SPICS) == 1)
 #define DRDY_IS_LOW()  (bcm2835_gpio_lev(MISO)==0)
 #define DRDY_IS_HIGH() (bcm2835_gpio_lev(MISO)==1)
@@ -76,6 +75,7 @@ static int  LMP90100_ReadChannel(void)
 	buf[2] = 0x89;  // Read 0x19 register
 	buf[3] = 0x00;  // Transmit zero.. Response will be written to this value
 	bcm2835_aux_spi_transfern(buf,4);  // Transmit set value of buf, write response into buf for each byte sent.
+
 	ans = buf[3] & 0x07;  // Read 3 LSBs of 0x19 register
 	return ans;
 }
@@ -91,7 +91,7 @@ static int  LMP90100_ReadChannel(void)
 */
 static float LMP90100_ReadADC(void)
 {
-    float  temp_calc;
+	float temp_calc;
 	uint8_t buf[6];
 	int32_t adc;
 
@@ -105,11 +105,11 @@ static float LMP90100_ReadADC(void)
 
 	adc =  (((uint32_t) buf[3]) << 16);
 	adc += (((uint32_t) buf[4]) <<  8);
-    adc += (((uint32_t) buf[5]) <<  0);
+	adc += (((uint32_t) buf[5]) <<  0);
 
-    temp_calc = (((float)adc) /16777216*4015 - 100)/0.3925;
+	temp_calc = (((float)adc) /16777216*4015 - 100)/0.3925;
 
-    return temp_calc;
+  return temp_calc;
 }
 /*
 *********************************************************************************************************
@@ -126,48 +126,35 @@ static unsigned int LMP90100_DRDY (void)
 	int Channel;
 	float Temp_Reading;
 	int result;
-    static int ctr = 0;
+  static int ctr = 0;
 
 
-	 if (DRDY_IS_LOW() && CS_IS_LOW())
-	  {
-        if (ctr > 1)
-        {
+	if (DRDY_IS_LOW() && CS_IS_LOW())
+	{
+  	if (ctr > 1)
+    {
+    	Temp_Reading = LMP90100_ReadADC();
+      Channel = LMP90100_ReadChannel();
+      printf("Ch:%02X Temp: %3.1f \r",Channel,Temp_Reading);
+      ctr = 0;
+      result = 1;
+    }
+    else
+    {
+    	ctr = 0;
+      result = 0;
+    }
+	}
 
-          Temp_Reading = LMP90100_ReadADC();
-          Channel = LMP90100_ReadChannel();
-          printf("Ch:%02X Temp: %3.1f \r",Channel,Temp_Reading);
-          ctr = 0;
-          result = 1;
-        }
-        else
-        {
-        	ctr = 0;
-        	result = 0;
-        }
-
-	  }
-
-	 if (DRDY_IS_HIGH() && CS_IS_LOW() && (ctr == 0))
-	  {
+	if (DRDY_IS_HIGH() && CS_IS_LOW())
+	{
 		ctr++;
+	}
+	if (DRDY_IS_HIGH() && CS_IS_HIGH() && (ctr >= 1))
+	{
+		ctr = 0;
+	}
 
-	  }
-
-	 if (DRDY_IS_HIGH() && CS_IS_LOW() && (ctr >= 1))
-	  {
-
-		ctr++;
-		//printf("Detect %02X\r",ctr);
-
-	   }
-
-	 if (DRDY_IS_HIGH() && CS_IS_HIGH() && (ctr >= 1))
-	 {
-		 ctr = 0;
-	 }
-
-	//bsp_DelayUS(5000);
 	return result;
 }
 
@@ -182,54 +169,50 @@ static unsigned int LMP90100_DRDY (void)
 */
 int  main()
 {
-
-    unsigned int cs_state = 1;
+	unsigned int cs_state = 1;
 
 	uint8_t setup_buf[16];
-    if (!bcm2835_init())
-        return 1;
+  if (!bcm2835_init())
+  	return 1;
 
-		bcm2835_aux_spi_begin();
-		bcm2835_spi_setBitOrder(BCM2835_SPI_BIT_ORDER_MSBFIRST);   //default
-		bcm2835_spi_setDataMode(BCM2835_SPI_MODE0);                //default
-		bcm2835_aux_spi_setClockDivider(BCM2835_SPI_CLOCK_DIVIDER_8192);//default
+	bcm2835_aux_spi_begin();
+	bcm2835_spi_setBitOrder(BCM2835_SPI_BIT_ORDER_MSBFIRST);   //default
+	bcm2835_spi_setDataMode(BCM2835_SPI_MODE0);                //clock mode for LMP90100
+	bcm2835_aux_spi_setClockDivider(BCM2835_SPI_CLOCK_DIVIDER_2048);//default
 
-    bcm2835_gpio_fsel(SPICS, BCM2835_GPIO_FSEL_OUTP);//
-    bcm2835_gpio_write(SPICS, HIGH);
+  bcm2835_gpio_fsel(SPICS, BCM2835_GPIO_FSEL_OUTP);//
+  bcm2835_gpio_write(SPICS, HIGH);
 
 
 	//Todo:  Create Setup function
-    CS_0();
-    setup_buf[0] = 0x10;
-    setup_buf[1] = 0x01;
-    setup_buf[2] = 0x02;
-    setup_buf[3] = 0x0A;   //Set current source to 1mA
-    setup_buf[4] = 0x0F;
-    setup_buf[5] = 0x98;   //Set continuous scan on CH0 - CH3 only.
-    setup_buf[6] = 0x10;
-    setup_buf[7] = 0x02;
-    setup_buf[8] = 0x01;
-    setup_buf[9] = 0x60;
-    setup_buf[10] = 0x03;
-    setup_buf[11] = 0x60;
-    setup_buf[12] = 0x05;
-    setup_buf[13] = 0x60;
-    setup_buf[14] = 0x07;
-    setup_buf[15] = 0x60;
+  CS_0();
+  setup_buf[0] = 0x10;
+  setup_buf[1] = 0x01;
+  setup_buf[2] = 0x02;
+  setup_buf[3] = 0x0A;   //Set current source to 1mA
+  setup_buf[4] = 0x0F;
+  setup_buf[5] = 0x98;   //Set continuous scan on CH0 - CH3 only.
+  setup_buf[6] = 0x10;
+  setup_buf[7] = 0x02;
+  setup_buf[8] = 0x01;
+  setup_buf[9] = 0x60;
+  setup_buf[10] = 0x03;
+  setup_buf[11] = 0x60;
+  setup_buf[12] = 0x05;
+  setup_buf[13] = 0x60;
+  setup_buf[14] = 0x07;
+  setup_buf[15] = 0x60;
 
-    bcm2835_aux_spi_transfern(setup_buf,16);
-    CS_1();
+  bcm2835_aux_spi_transfern(setup_buf,16);
+  CS_1();
 
-    while(1)
+  while(1)
 	{
-
-
   //if (LMP90100_DRDY())
 	if (cs_state == 1)
 	{
-
-	   CS_0();
-	   cs_state = 0;
+		CS_0();
+	  cs_state = 0;
 	}
 
 	if (LMP90100_DRDY())
@@ -240,7 +223,6 @@ int  main()
 			cs_state = 1;
 		}
 		bsp_DelayUS(3000);
-
 	}
 	}
     bcm2835_aux_spi_end();
