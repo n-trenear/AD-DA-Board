@@ -64,8 +64,6 @@
 #define CS_AUX_IS_HIGH() (bcm2835_gpio_lev(SPICS_AUX) == 1)
 #define DRDY_AUX_IS_LOW()  (bcm2835_gpio_lev(MISO_AUX)==0)
 #define DRDY_AUX_IS_HIGH() (bcm2835_gpio_lev(MISO_AUX)==1)
-#define CMD_WREG 0x10
-#define CMD_RREG 0x90
 
 typedef enum {FALSE = 0, TRUE = !FALSE} bool;
 
@@ -392,6 +390,30 @@ static void ADS1256_Send8Bit(uint8_t _data){
 
 /*
 *********************************************************************************************************
+*	name: ADS1256_WaitDRDY
+*	function: delay time  wait for automatic calibration
+*	parameter:  NULL
+*	The return value:  NULL
+*********************************************************************************************************
+*/
+static void ADS1256_WaitDRDY(void){
+	uint32_t ch_num;
+
+	for (ch_num = 0; ch_num < 400000; ch_num++)
+	{
+		if (DRDY_IS_LOW())
+		{
+			break;
+		}
+	}
+	if (ch_num >= 400000)
+	{
+		printf("ADS1256_WaitDRDY() Time Out ...\r\n");
+	}
+}
+
+/*
+*********************************************************************************************************
 *	name: ADS1256_CfgADC
 *	function: The configuration parameters of ADC, gain and data rate
 *	parameter: _gain:gain 1-64
@@ -677,30 +699,6 @@ static void ADS1256_SetDiffChannal(uint8_t _ch){
 	else if (_ch == 3)
 	{
 		ADS1256_WriteReg(REG_MUX, (6 << 4) | 7);	/*DiffChannal   AIN6�� AIN7 */
-	}
-}
-
-/*
-*********************************************************************************************************
-*	name: ADS1256_WaitDRDY
-*	function: delay time  wait for automatic calibration
-*	parameter:  NULL
-*	The return value:  NULL
-*********************************************************************************************************
-*/
-static void ADS1256_WaitDRDY(void){
-	uint32_t ch_num;
-
-	for (ch_num = 0; ch_num < 400000; ch_num++)
-	{
-		if (DRDY_IS_LOW())
-		{
-			break;
-		}
-	}
-	if (ch_num >= 400000)
-	{
-		printf("ADS1256_WaitDRDY() Time Out ...\r\n");
 	}
 }
 
