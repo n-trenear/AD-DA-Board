@@ -246,6 +246,29 @@ static float LMP90100_ReadADC(void)
 
 /*
 *********************************************************************************************************
+*	name: storeTemp
+*	function:  Save temperature reading as csv with time stamp
+*	parameter: Vin : The temperature to be saved
+*
+*	The return value:  NULL
+*********************************************************************************************************
+*/
+void storeTemp(int32_t temp){
+	FILE * fp;
+	fp = fopen ("TemperatureReadings.csv", "a+");
+
+	// store temperature and time
+	time_t t = time(NULL) + 36000; //current time in seconds adding 10 hours
+	struct tm tm = *localtime(&t);
+
+	fprintf(fp, "%d-%d-%d %d:%d:%d,%3.1f\n", tm.tm_mday, tm.tm_mon + 1, tm.tm_year + 1900,
+	tm.tm_hour, tm.tm_min, tm.tm_sec, temp);
+
+	fclose(fp);
+}
+
+/*
+*********************************************************************************************************
 *	name: LMP90100_DRDY
 *	function: Detect ADC ready pulse on MISO line and initate ADC read and ADC channel number read
 *	parameter: NULL
@@ -269,6 +292,7 @@ static unsigned int LMP90100_DRDY (void)
       Channel = LMP90100_ReadChannel();
       //printf("Ch:%02X Temp: %3.1f \r",Channel,Temp_Reading);
 			printf("Ch:%d Temp: %3.1f \n",Channel,Temp_Reading);
+			storeTemp(Temp_Reading);
       ctr = 0;
       result = 1;
     }
