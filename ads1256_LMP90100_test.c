@@ -267,7 +267,8 @@ static unsigned int LMP90100_DRDY (void)
     {
     	Temp_Reading = LMP90100_ReadADC();
       Channel = LMP90100_ReadChannel();
-      printf("Ch:%02X Temp: %3.1f \r",Channel,Temp_Reading);
+      //printf("Ch:%02X Temp: %3.1f \r",Channel,Temp_Reading);
+			printf("Ch:%d Temp: %3.1f \n",Channel,Temp_Reading);
       ctr = 0;
       result = 1;
     }
@@ -919,7 +920,7 @@ static void ADS1256_DispVoltage(void){
 		printf("%ld.%03ld %03ld V \r\n", Vin / 1000000, (Vin%1000000)/1000, Vin%1000);
 		storeVoltage(Vin);
 	}
-	printf("\33[%dA", 1);
+	//printf("\33[%dA", 1);
 	bsp_DelayUS(100000);
 }
 
